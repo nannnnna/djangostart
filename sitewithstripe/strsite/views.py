@@ -12,7 +12,7 @@ stripe.api_key = "sk_test_51NsTBiF6oMer2mpJqJr6mXh8S7GiJLXsPzRXgiVbFnMqxHVrPiBgi
 @csrf_exempt
 def get_session_id(request, item_id):
     item = get_object_or_404(Item, pk=item_id)
-    quantity = int(request.GET.get('quantity', 1))  # Получаем количество товара из запроса, по умолчанию 1
+    quantity = int(request.GET.get('quantity', item.quantity))  # Получаем количество товара из запроса, по умолчанию 1
     item_price = int(item.price * 100)  # Преобразуем цену в центы
     total_price = quantity * item_price
     session = stripe.checkout.Session.create(
