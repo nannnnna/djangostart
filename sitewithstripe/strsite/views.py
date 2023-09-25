@@ -12,6 +12,9 @@ stripe.api_key = "sk_test_51NsTBiF6oMer2mpJqJr6mXh8S7GiJLXsPzRXgiVbFnMqxHVrPiBgi
 @csrf_exempt
 def get_session_id(request, item_id):
     item = get_object_or_404(Item, pk=item_id)
+    quantity = int(request.GET.get('quantity', 1))  # Получаем количество товара из запроса, по умолчанию 1
+    item_price = int(item.price * 100)  # Преобразуем цену в центы
+    total_price = quantity * item_price
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         line_items=[
@@ -22,9 +25,9 @@ def get_session_id(request, item_id):
                         "name": item.name,
                         "description": item.description,
                     },
-                    "unit_amount": int(item.price * 100),  # Сумма в центах
+                    "unit_amount": item_price,  # Сумма в центах
                 },
-                "quantity": 1,
+                "quantity": quantity,
             }
         ],
         mode="payment",
