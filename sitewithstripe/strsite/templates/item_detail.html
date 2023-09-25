@@ -10,6 +10,9 @@
     <p>Price: ${{ item.price }}</p>
     <button id="checkout-button">Buy</button>
 
+    <a href="{% url 'item_list' %}">Список товаров</a>
+
+
     <script>
         var stripe = Stripe('pk_test_51NsTBiF6oMer2mpJ1lL7oQUh2mlxIwCGlPEr7BP7Z0O6MlcFADCgD786WIdCYwUqfWzUjGpOWycKl6FWLjuCcA0E00wdcrCIN1');  // Замените на ваш публичный ключ Stripe
         var checkoutButton = document.getElementById('checkout-button');

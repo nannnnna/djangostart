@@ -33,9 +33,12 @@ def get_session_id(request, item_id):
     )
     return JsonResponse({"session_id": session.id})
 
-from django.shortcuts import render, get_object_or_404
-from .models import Item
 
 def item_detail(request, item_id):
     item = get_object_or_404(Item, pk=item_id)
     return render(request, 'item_detail.html', {'item': item})
+
+
+def item_list(request):
+    items = Item.objects.all()  # Получаем все товары из базы данных
+    return render(request, 'item_list.html', {'items': items})

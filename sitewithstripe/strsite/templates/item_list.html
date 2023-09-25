@@ -1,0 +1,17 @@
+<!-- Ваш файл item_list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Item List</title>
+</head>
+<body>
+    <h1>Список товаров</h1>
+    <ul>
+        {% for item in items %}
+            <li>
+                <a href="{% url 'item_detail' item.id %}">{{ item.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
