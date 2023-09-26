@@ -14,6 +14,10 @@
     <button id="checkout-button">Buy</button>
 
     <a href="{% url 'item_list' %}">Список товаров</a>
+    <button onclick="redirectToOrder()">Перейти в корзину</button>
+
+
+
 
 
     <script>
@@ -27,6 +31,11 @@
             var price = {{ item.price }};  // Цена товара из контекста шаблона
             var total = quantity * price;
             totalSpan.textContent = total.toFixed(2);  // Отображаем общую сумму с двумя десятичными знаками
+        }
+
+        function redirectToOrder() {
+            // Используем JavaScript для переадресации на страницу order.html
+            window.location.href = '/order/';
         }
 
         // Обработчик события для изменения количества

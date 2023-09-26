@@ -45,3 +45,6 @@ def item_detail(request, item_id):
 def item_list(request):
     items = Item.objects.all()  # Получаем все товары из базы данных
     return render(request, 'item_list.html', {'items': items})
+
+def order(request):
+    return render(request, 'order.html')
