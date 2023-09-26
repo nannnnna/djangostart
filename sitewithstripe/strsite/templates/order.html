@@ -1,16 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>корзина</title>
+    <title>Корзина</title>
 </head>
 <body>
-    <h1>Заголовок 1</h1>
-    <p>Это пример страницы с несколькими заголовками.</p>
+    <h1>Заказ</h1>
+    <ul>
+        {% for order_item in order.orderitem_set.all %}
+            <li>{{ order_item.item.name }} - Количество: {{ order_item.quantity }} - Цена: ${{ order_item.item_price }}</li>
+        {% endfor %}
+    </ul>
+    <p>Общая сумма заказа: ${{ order.total_price }}</p>
+
+    <!-- Кнопка для перехода к платежной сессии Stripe -->
+    <!-- Форма для оплаты -->
+    <form id="checkout-form" method="POST" action="{% url 'create_order_session' %}">
+        {% csrf_token %}
+        <input type="hidden" name="item_id" value="{{ item_id }}">
+        <input type="hidden" name="total_price" value="{{ order.total_price }}">
+        <button type="submit">Оплатить {{ order.total_price }} USD</button>
+    </form>
     
-    <h2>Заголовок 2</h2>
-    <p>Это второй уровень заголовка.</p>
-    
-    <h3>Заголовок 3</h3>
-    <p>Это третий уровень заголовка.</p>
+
+<!-- JavaScript-функция -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var checkoutForm = document.getElementById('checkout-form');
+
+        checkoutForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Отправляем форму на сервер и перенаправляем пользователя на страницу оплаты
+            fetch(checkoutForm.action, {
+                method: 'POST',
+                body: new FormData(checkoutForm),
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                window.location.href = data.redirect_url;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+        });
+
+        function getCookie(name) {
+            // Функция для получения CSRF-токена из куки
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>  
 </body>
 </html>

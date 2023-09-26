@@ -14,7 +14,7 @@
     <button id="checkout-button">Buy</button>
 
     <a href="{% url 'item_list' %}">Список товаров</a>
-    <button onclick="redirectToOrder()">Перейти в корзину</button>
+    <button onclick="redirectToOrder({{ item.id }}, {{ quantity }})">Перейти в корзину</button>
 
 
 
@@ -35,7 +35,7 @@
 
         function redirectToOrder() {
             // Используем JavaScript для переадресации на страницу order.html
-            window.location.href = '/order/';
+            window.location.href = '/order/?item_id=${item_id}&quantity=${quantity}';
         }
 
         // Обработчик события для изменения количества
