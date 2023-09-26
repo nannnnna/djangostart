@@ -12,6 +12,18 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+# settings.py
+
+import os
+
+DEBUG = os.environ.get('DEBUG', 'False')
+
+if os.environ.get('ENVIRONMENT') == 'production':
+    DATABASE_URL = os.environ.get('PRODUCTION_DATABASE_URL')
+else:
+    DATABASE_URL = os.environ.get('DEVELOPMENT_DATABASE_URL')
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
