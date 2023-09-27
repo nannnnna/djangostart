@@ -52,8 +52,12 @@ def order(request):
     # Получаем текущую корзину из сессии или создаем пустой список, если его еще нет
     cart = request.session.get('cart', [])
     
+    # Вычисляем общую стоимость всех товаров в корзине
+    total_price = sum(Decimal(item['price']) for item in cart)
+    
     context = {
         'cart': cart,
+        'total_price': total_price,  # Передаем общую стоимость в шаблон
     }
     return render(request, 'order.html', context)
 
