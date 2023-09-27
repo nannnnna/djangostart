@@ -55,14 +55,10 @@ def order(request):
     # Вычисляем общую стоимость всех товаров в корзине
     total_price = sum(Decimal(item['price']) for item in cart)
     
+    # Передаем общую стоимость в шаблон как total_order_amount
     context = {
         'cart': cart,
-        'total_price': total_price,  # Передаем общую стоимость в шаблон
-    }
-    total_order_amount = Decimal("100.00")  # Замените этот пример на фактический расчет общей суммы заказа
-
-    context = {
-        'total_order_amount': total_order_amount,  # Передаем общую сумму заказа в шаблон
+        'total_order_amount': total_price,  # Передаем общую стоимость заказа
     }
     return render(request, 'order.html', context)
 
