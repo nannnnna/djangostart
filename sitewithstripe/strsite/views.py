@@ -59,6 +59,11 @@ def order(request):
         'cart': cart,
         'total_price': total_price,  # Передаем общую стоимость в шаблон
     }
+    total_order_amount = Decimal("100.00")  # Замените этот пример на фактический расчет общей суммы заказа
+
+    context = {
+        'total_order_amount': total_order_amount,  # Передаем общую сумму заказа в шаблон
+    }
     return render(request, 'order.html', context)
 
 def add_to_cart(request, item_id):
@@ -81,5 +86,32 @@ def add_to_cart(request, item_id):
     request.session.modified = True  # Убедитесь, что сессия будет сохранена
     
     return redirect('order')
+@csrf_exempt
+def create_order_session(request):
+    try:
+        total_amount = request.GET.get("total_order_amount")  # Изменено на "total_order_amount"
+
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[
+                {
+                    "price_data": {
+                        "currency": "usd",
+                        "product_data": {
+                            "name": "Total Order",
+                        },
+                        "unit_amount": int(float(total_amount) * 100),  # Преобразуем в центы
+                    },
+                    "quantity": 1,
+                }
+            ],
+            mode="payment",
+            success_url="http://yourwebsite.com/success",  # Замените на URL вашей успешной страницы
+            cancel_url="http://yourwebsite.com/cancel",    # Замените на URL вашей страницы отмены
+        )
+
+        return JsonResponse({"session_id": session.id})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 

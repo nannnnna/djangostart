@@ -6,14 +6,36 @@
 <body>
     <h1>Заказ</h1>
     <ul>
-        {% for item in cart %}
-            <li>
-                <p>Название товара: {{ item.name }}</p>
-                <p>Стоимость товара: ${{ item.price }}</p>
-                <p>Количество: {{ item.quantity }}</p>
-            </li>
-        {% endfor %}
+        <!-- Список товаров в заказе -->
     </ul>
-    <p>Общая сумма к оплате: ${{ total_price }}</p>  <!-- Отображаем общую сумму -->
+    <p>Общая сумма к оплате: ${{ total_order_amount }}</p>  <!-- Отображаем общую сумму заказа -->
+
+    <!-- Кнопка "Оплатить" -->
+    <button id="checkoutButton">Оплатить</button>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        var stripe = Stripe("pk_test_51NsTBiF6oMer2mpJ1lL7oQUh2mlxIwCGlPEr7BP7Z0O6MlcFADCgD786WIdCYwUqfWzUjGpOWycKl6FWLjuCcA0E00wdcrCIN1");
+
+        var checkoutButton = document.getElementById("checkoutButton");
+
+        checkoutButton.addEventListener("click", function () {
+            fetch("/create_order_session/?total_order_amount={{ total_order_amount }}") // Создаем платежную сессию для заказа
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (session) {
+                    return stripe.redirectToCheckout({ sessionId: session.session_id });
+                })
+                .then(function (result) {
+                    if (result.error) {
+                        console.error(result.error.message);
+                    }
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        });
+    </script>
 </body>
 </html>
