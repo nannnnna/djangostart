@@ -37,32 +37,6 @@ def get_session_id(request, item_id):
     )
     return JsonResponse({"session_id": session.id})
 
-@csrf_exempt
-def get_session_id(request, item_id):
-    item = get_object_or_404(Item, pk=item_id)
-    quantity = int(request.GET.get('quantity', item.quantity))  # Получаем количество товара из запроса, по умолчанию 1
-    item_price = int(item.price * 100)  # Преобразуем цену в центы
-    total_price = quantity * item_price
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        line_items=[
-            {
-                "price_data": {
-                    "currency": "usd",
-                    "product_data": {
-                        "name": item.name,
-                        "description": item.description,
-                    },
-                    "unit_amount": item_price,  # Сумма в центах
-                },
-                "quantity": quantity,
-            }
-        ],
-        mode="payment",
-        success_url="http://yourwebsite.com/success",  # Замените на URL вашей успешной страницы
-        cancel_url="http://yourwebsite.com/cancel",    # Замените на URL вашей страницы отмены
-    )
-    return JsonResponse({"session_id": session.id})
 
 
 def item_detail(request, item_id):
@@ -77,31 +51,4 @@ def item_list(request):
 def order(request):
     return render(request, 'order.html')
 
-@csrf_exempt
-def create_order_session(request, item_id):
-    total_price = request.POST.get('total_price')
-    item = get_object_or_404(Item, pk=item_id)
-    quantity = int(request.GET.get('quantity', item.quantity))  # Получаем количество товара из запроса, по умолчанию 1
-    item_price = int(item.price * 100)  # Преобразуем цену в центы
-    total_price = quantity * item_price
-    session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        line_items=[
-            {
-                "price_data": {
-                    "currency": "usd",
-                    "product_data": {
-                        "name": item.name,
-                        "description": item.description,
-                    },
-                    "unit_amount": item_price,  # Сумма в центах
-                },
-                "quantity": quantity,
-            }
-        ],
-        mode="payment",
-        success_url="http://yourwebsite.com/success",  # Замените на URL вашей успешной страницы
-        cancel_url="http://yourwebsite.com/cancel", 
-    )
-    
-    return JsonResponse({"redirect_url": session.url})
+
