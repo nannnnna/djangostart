@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Item, Order, OrderItem
 
 stripe.api_key = "sk_test_51NsTBiF6oMer2mpJqJr6mXh8S7GiJLXsPzRXgiVbFnMqxHVrPiBgiQzpZRwmhXNQ14lM7Scia0c4GddMZk0HYfxX0036Nvr5fy"  # Замените на ваш ключ Stripe
-
+#gjjvtnrf
 @csrf_exempt
 def get_session_id(request, item_id):
     item = get_object_or_404(Item, pk=item_id)
