@@ -49,17 +49,21 @@ def item_list(request):
 
 
 def order(request):
-    # Получаем текущую корзину из сессии или создаем пустой список, если его еще нет
     cart = request.session.get('cart', [])
-    
-    # Вычисляем общую стоимость всех товаров в корзине
-    total_price = sum(Decimal(item['price']) for item in cart)
-    
-    # Передаем общую стоимость в шаблон как total_order_amount
+    conversion_rate_to_eur = 0.85  # Replace with your actual conversion rate
+
+    total_price_usd = sum(Decimal(item['price']) for item in cart)
+    total_price_eur = convert_to_eur(total_price_usd, conversion_rate_to_eur)
+
+    currencies = [("usd", "USD"), ("eur", "EUR")]
+
     context = {
         'cart': cart,
-        'total_order_amount': total_price,  # Передаем общую стоимость заказа
+        'total_price_usd': total_price_usd,
+        'total_price_eur': total_price_eur,
+        'currencies': currencies,
     }
+    
     return render(request, 'order.html', context)
 
 def add_to_cart(request, item_id):
@@ -110,4 +114,6 @@ def create_order_session(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+def convert_to_eur(usd_price, conversion_rate):
+    return Decimal(str(usd_price)) * Decimal(str(conversion_rate))
 

@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Корзина</title>
+    <title>Order</title>
 </head>
 <body>
-    <h1>Заказ</h1>
+    <h1>Your Order</h1>
     <ul>
         <!-- Список товаров в заказе -->
     </ul>
-    <p>Общая сумма к оплате: ${{ total_order_amount }}</p>  <!-- Отображаем общую сумму заказа -->
+    <form id="currency-form">
+        <label for="currency">Select Currency:</label>
+        <select id="currency" name="currency">
+            <option value="usd">USD</option>
+            <option value="eur">EUR</option>
+        </select>
+    </form>
+    <p>Total Price (USD): ${{ total_price_usd }}</p>
+    <p>Total Price (EUR): €{{ total_price_eur }}</p>
 
     <!-- Кнопка "Оплатить" -->
     <button id="checkoutButton">Оплатить</button>
@@ -18,9 +26,19 @@
         var stripe = Stripe("pk_test_51NsTBiF6oMer2mpJ1lL7oQUh2mlxIwCGlPEr7BP7Z0O6MlcFADCgD786WIdCYwUqfWzUjGpOWycKl6FWLjuCcA0E00wdcrCIN1");
 
         var checkoutButton = document.getElementById("checkoutButton");
-
+        var currencyDropdown = document.getElementById("currency");
+    
         checkoutButton.addEventListener("click", function () {
-            fetch("/create_order_session/?total_order_amount={{ total_order_amount }}") // Создаем платежную сессию для заказа
+            var selectedCurrency = currencyDropdown.value; // Get the selected currency
+    
+            // Get the total price from the template
+            var totalPriceUSD = parseFloat('{{ total_price_usd }}').toFixed(2);
+    
+            var selectedCurrency = currencyDropdown.value;
+            console.log("Selected Currency:", selectedCurrency);
+            var fetchURL = `/create_order_session/?total_order_amount=${totalPriceUSD}&currency=${selectedCurrency}`;
+            console.log("Fetch URL:", fetchURL);
+            fetch(fetchURL)
                 .then(function (response) {
                     return response.json();
                 })
@@ -36,6 +54,22 @@
                     console.error(error);
                 });
         });
+    
+        // Check if the "total-price" element exists before modifying its content
+        var totalPriceElement = document.getElementById("total-price");
+        if (totalPriceElement) {
+            currencyDropdown.addEventListener("change", function() {
+                var selectedCurrency = currencyDropdown.value;
+    
+                if (selectedCurrency === "eur") {
+                    totalPriceElement.textContent = "Total Price (EUR): €" + (totalPriceUSD * conversionRate).toFixed(2);
+                } else {
+                    totalPriceElement.textContent = "Total Price (USD): $" + totalPriceUSD.toFixed(2);
+                }
+            });
+        }
     </script>
+    
+           
 </body>
 </html>

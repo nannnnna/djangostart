@@ -1,6 +1,6 @@
 FROM python:3.11-slim-buster
 
-ENV TZ="Europe/Kiev"
+ENV TZ="Europe/Moscow"
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
