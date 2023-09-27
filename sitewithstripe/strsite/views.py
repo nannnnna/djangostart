@@ -47,20 +47,35 @@ def item_list(request):
     items = Item.objects.all()  # Получаем все товары из базы данных
     return render(request, 'item_list.html', {'items': items})
 
+
 def order(request):
-    cart_item_name = request.session.get('cart_item_name', '')
-    cart_item_price = request.session.get('cart_item_price', 0)
+    # Получаем текущую корзину из сессии или создаем пустой список, если его еще нет
+    cart = request.session.get('cart', [])
+    
     context = {
-        'cart_item_name': cart_item_name,
-        'cart_item_price': cart_item_price,
+        'cart': cart,
     }
-    return render(request, 'order.html', context) 
+    return render(request, 'order.html', context)
 
 def add_to_cart(request, item_id):
     item = get_object_or_404(Item, pk=item_id)
     quantity = int(request.GET.get('quantity', item.quantity))
-    request.session['cart_item_name'] = item.name
-    request.session['cart_item_price'] = str(item.price * quantity)  # Преобразуем Decimal в строку
+    
+    # Извлекаем текущую информацию о корзине из сессии или создаем пустой список, если его еще нет
+    cart = request.session.get('cart', [])
+    
+    # Создаем словарь для текущего товара и добавляем его в корзину
+    item_data = {
+        'name': item.name,
+        'price': str(item.price * quantity),  # Преобразуем Decimal в строку
+        'quantity': quantity
+    }
+    cart.append(item_data)
+    
+    # Сохраняем обновленную корзину в сессии
+    request.session['cart'] = cart
+    request.session.modified = True  # Убедитесь, что сессия будет сохранена
+    
     return redirect('order')
 
 

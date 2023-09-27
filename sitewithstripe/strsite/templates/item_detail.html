@@ -21,6 +21,7 @@
 
 
 
+
     <script>
         var stripe = Stripe('pk_test_51NsTBiF6oMer2mpJ1lL7oQUh2mlxIwCGlPEr7BP7Z0O6MlcFADCgD786WIdCYwUqfWzUjGpOWycKl6FWLjuCcA0E00wdcrCIN1');  // Замените на ваш публичный ключ Stripe
         var checkoutButton = document.getElementById('checkout-button');
@@ -36,7 +37,7 @@
 
         function redirectToOrder(item_id, quantity) {
             // Используем JavaScript для переадресации на страницу order.html
-            window.location.href = '/order/?item_id=${item_id}&quantity=${quantity}';
+            window.location.href = `/order/?item_id=${item_id}&quantity=${quantity}`;
         }
         quantityInput.addEventListener('change', function () {
             updateTotal();

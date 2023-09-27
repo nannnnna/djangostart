@@ -5,7 +5,14 @@
 </head>
 <body>
     <h1>Заказ</h1>
-    <p>Название товара: {{ cart_item_name }}</p>
-    <p>Стоимость товара: ${{ cart_item_price }}</p>
+    <ul>
+        {% for item in cart %}
+            <li>
+                <p>Название товара: {{ item.name }}</p>
+                <p>Стоимость товара: ${{ item.price }}</p>
+                <p>Количество: {{ item.quantity }}</p>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
