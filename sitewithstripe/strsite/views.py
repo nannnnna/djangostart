@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
-
-# Create your views here.
+from decimal import Decimal
 import stripe
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -49,6 +48,19 @@ def item_list(request):
     return render(request, 'item_list.html', {'items': items})
 
 def order(request):
-    return render(request, 'order.html')
+    cart_item_name = request.session.get('cart_item_name', '')
+    cart_item_price = request.session.get('cart_item_price', 0)
+    context = {
+        'cart_item_name': cart_item_name,
+        'cart_item_price': cart_item_price,
+    }
+    return render(request, 'order.html', context) 
+
+def add_to_cart(request, item_id):
+    item = get_object_or_404(Item, pk=item_id)
+    quantity = int(request.GET.get('quantity', item.quantity))
+    request.session['cart_item_name'] = item.name
+    request.session['cart_item_price'] = str(item.price * quantity)  # Преобразуем Decimal в строку
+    return redirect('order')
 
 

@@ -14,7 +14,8 @@
     <button id="checkout-button">Buy</button>
 
     <a href="{% url 'item_list' %}">Список товаров</a>
-    <button onclick="redirectToOrder({{ item.id }}, {{ quantity }})">Перейти в корзину</button>
+    <button onclick="redirectToOrder({{ item.id }}, {{ quantity }})">к странице order</button>
+    <button onclick="addToCart({{ item.id }}, {{ quantity }})">Перейти в корзину</button>
 
 
 
@@ -33,9 +34,31 @@
             totalSpan.textContent = total.toFixed(2);  // Отображаем общую сумму с двумя десятичными знаками
         }
 
-        function redirectToOrder() {
+        function redirectToOrder(item_id, quantity) {
             // Используем JavaScript для переадресации на страницу order.html
             window.location.href = '/order/?item_id=${item_id}&quantity=${quantity}';
+        }
+        quantityInput.addEventListener('change', function () {
+            updateTotal();
+            // Также можно обновить значение quantity здесь, если оно необходимо для других целей.
+        });
+
+        function addToCart(item_id, quantity) {
+            var quantity = quantityInput.value;
+            fetch(`/add_to_cart/${item_id}?quantity=${quantity}`)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (data.success) {
+                        alert("Товар добавлен в корзину!");
+                    } else {
+                        alert("Произошла ошибка при добавлении товара в корзину.");
+                    }
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         }
 
         // Обработчик события для изменения количества
